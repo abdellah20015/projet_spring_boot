@@ -1,0 +1,92 @@
+//
+
+<dependencies>
+    <!-- Hibernate ORM -->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>5.5.7.Final</version>
+    </dependency>
+
+    <!-- Database driver -->
+    <!-- For example, if you're using MySQL -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.27</version>
+    </dependency>
+</dependencies>
+
+//
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/your_database</property>
+        <property name="hibernate.connection.username">your_username</property>
+        <property name="hibernate.connection.password">your_password</property>
+
+        <!-- Hibernate dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+        <!-- Mapping files -->
+        <!-- Add your entity classes here -->
+        <mapping class="com.example.entity.YourEntityClass"/>
+
+    </session-factory>
+</hibernate-configuration>
+
+
+//
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "your_table")
+public class YourEntityClass {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "column_name")
+    private String columnName;
+
+    // Getters and setters
+}
+
+
+//
+
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateExample {
+    public static void main(String[] args) {
+        try (SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+             Session session = sessionFactory.openSession()) {
+
+            // Begin a transaction
+            session.beginTransaction();
+
+            // Create a new entity instance
+            YourEntityClass entity = new YourEntityClass();
+            entity.setColumnName("Value");
+
+            // Save the entity to the database
+            session.save(entity);
+
+            // Commit the transaction
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
